@@ -8,8 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { toast } from "@/components/ui/use-toast"
-import { Toaster } from "@/components/ui/toaster"
+import toast, { Toaster } from "react-hot-toast"
 import { CheckCircle2 } from "lucide-react"
 
 const formSchema = z.object({
@@ -48,10 +47,7 @@ export function ContactForm() {
     setTimeout(() => {
       setIsSubmitting(false)
       setIsSubmitted(true)
-      toast({
-        title: "Message sent!",
-        description: "We'll get back to you as soon as possible.",
-      })
+      toast.success("Message sent! We'll get back to you as soon as possible.")
       console.log(values)
     }, 1500)
   }
@@ -124,7 +120,9 @@ export function ContactForm() {
               <FormControl>
                 <Textarea placeholder="Tell us more about your inquiry..." className="min-h-[120px]" {...field} />
               </FormControl>
-              <FormDescription>Please provide as much detail as possible so we can best assist you.</FormDescription>
+              <FormDescription>
+                Please provide as much detail as possible so we can best assist you.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -137,4 +135,3 @@ export function ContactForm() {
     </Form>
   )
 }
-

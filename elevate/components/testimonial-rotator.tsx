@@ -1,11 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
-// Define the CaseStudy interface.
 export interface CaseStudy {
   id: number;
   name: string;
@@ -14,7 +12,6 @@ export interface CaseStudy {
   image?: string;
 }
 
-// Define props for the component.
 interface TestimonialRotatorProps {
   caseStudies: CaseStudy[];
 }
@@ -47,33 +44,33 @@ export default function TestimonialRotator({ caseStudies }: TestimonialRotatorPr
   };
 
   return (
-    <div className="relative w-full max-w-md mx-auto">
-      {/* Navigation Arrows */}
-      <div className="flex justify-between items-center mb-4 px-2">
-        <motion.button
-          onClick={handlePrev}
-          aria-label="Previous slide"
-          className="p-2 bg-[#5E3CB3] text-white rounded-full hover:scale-105 transition-transform"
-          whileHover={{ backgroundColor: "rgba(94,60,179,0.9)" }}
-        >
-          <ArrowLeft size={24} />
-        </motion.button>
-        <motion.button
-          onClick={handleNext}
-          aria-label="Next slide"
-          className="p-2 bg-[#5E3CB3] text-white rounded-full hover:scale-105 transition-transform"
-          whileHover={{ backgroundColor: "rgba(94,60,179,0.9)" }}
-        >
-          <ArrowRight size={24} />
-        </motion.button>
-      </div>
+    <div className="relative w-full max-w-md mx-auto overflow-visible">
+      {/* Left Arrow (line-based) */}
+      <motion.button
+        onClick={handlePrev}
+        aria-label="Previous slide"
+        className="absolute top-1/2 -translate-y-1/2 -left-[3rem] p-2 text-[#5E3CB3] hover:scale-110 transition-transform z-10"
+        whileHover={{ color: "rgba(94,60,179,0.7)" }}
+      >
+        <ChevronLeft size={28} />
+      </motion.button>
+
+      {/* Right Arrow (line-based) */}
+      <motion.button
+        onClick={handleNext}
+        aria-label="Next slide"
+        className="absolute top-1/2 -translate-y-1/2 -right-[3rem] p-2 text-[#5E3CB3] hover:scale-110 transition-transform z-10"
+        whileHover={{ color: "rgba(94,60,179,0.7)" }}
+      >
+        <ChevronRight size={28} />
+      </motion.button>
 
       {/* Slide Container */}
-      <div className="relative h-auto min-h-[220px]">
+      <div className="relative h-auto min-h-[260px] px-2">
         <AnimatePresence mode="wait">
           <motion.div
             key={caseStudies[currentIndex].id}
-            className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6"
+            className="bg-gradient-to-tr from-white to-[#F9F7FE] dark:bg-gray-800 rounded-3xl shadow-xl shadow-[#5E3CB3]/10 p-8"
             initial="enter"
             animate="center"
             exit="exit"
@@ -81,11 +78,12 @@ export default function TestimonialRotator({ caseStudies }: TestimonialRotatorPr
             transition={{ duration: 0.5, ease: [0.65, 0, 0.35, 1] }}
             whileHover={{
               backgroundColor: "rgba(94,60,179,0.15)",
+              scale: 1.01,
               transition: { duration: 0.3 },
             }}
           >
             <motion.h4
-              className="text-2xl font-semibold mb-3 text-[#2A2D43]"
+              className="text-3xl font-semibold mb-4 text-[#2A2D43]"
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.1, duration: 0.4 }}
@@ -93,7 +91,7 @@ export default function TestimonialRotator({ caseStudies }: TestimonialRotatorPr
               {caseStudies[currentIndex].name}
             </motion.h4>
             <motion.p
-              className="text-base text-gray-600 dark:text-gray-300 mb-2"
+              className="text-base text-gray-600 dark:text-gray-300 leading-relaxed mb-3"
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.2, duration: 0.4 }}
@@ -101,7 +99,7 @@ export default function TestimonialRotator({ caseStudies }: TestimonialRotatorPr
               {caseStudies[currentIndex].description}
             </motion.p>
             <motion.p
-              className="text-sm italic text-gray-500 dark:text-gray-400"
+              className="text-sm italic text-gray-500 dark:text-gray-400 leading-relaxed"
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.4 }}
@@ -110,7 +108,7 @@ export default function TestimonialRotator({ caseStudies }: TestimonialRotatorPr
             </motion.p>
             <motion.a
               href="#"
-              className="inline-block mt-4 text-[#5E3CB3] hover:underline"
+              className="inline-block mt-4 text-[#5E3CB3] font-medium hover:underline"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4, duration: 0.4 }}
@@ -138,15 +136,3 @@ export default function TestimonialRotator({ caseStudies }: TestimonialRotatorPr
     </div>
   );
 }
-
-TestimonialRotator.propTypes = {
-  caseStudies: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      name: PropTypes.string.isRequired,
-      description: PropTypes.string.isRequired,
-      excerpt: PropTypes.string.isRequired,
-      image: PropTypes.string,
-    })
-  ).isRequired,
-};

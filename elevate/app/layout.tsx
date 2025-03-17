@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { SiteHeader } from "@/components/site-header"; // Updated: using named import
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -20,14 +21,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <head>{/* Additional meta tags can go here */}</head>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <SiteHeader /> {/* This renders your header on every page */}
         {children}
       </body>
     </html>

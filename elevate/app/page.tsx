@@ -1,101 +1,378 @@
-import Image from "next/image";
+"use client";
+
+import React, { useState, useEffect, useRef } from "react";
+import Head from "next/head";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import {
+  ArrowRight,
+  BookOpen,
+  Clock,
+  Users,
+  FileEdit,
+  Search,
+  GraduationCap,
+} from "lucide-react";
+
+import TestimonialRotator from "@/components/testimonial-rotator";
+import { AnimatedBackground } from "@/components/animated-background";
+import SiteFooter from "@/components/site-footer";
+import HowElevateUWorks from "@/components/how-elevateU-works";
+
+// JSON-LD schemas for FAQs and Organization
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How does ElevateU's AI counseling work?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ElevateU uses advanced artificial intelligence to analyze your academic history, interests, strengths, and goals. Our AI creates personalized recommendations for colleges, majors, and career paths while continuously learning as you use the platform."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can ElevateU help with scholarship applications?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Our AI Scholarship Finder scans thousands of opportunities and matches you with those aligned to your profile, while providing guidance on application materials and deadlines."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What makes ElevateU different from traditional counselors?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We provide 24/7 AI-driven support alongside real-world mentors from top universities. Our approach combines efficiency and personalization to deliver comprehensive college and career planning."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What about data privacy?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We take data security seriously. ElevateU uses industry-standard encryption and strict privacy protocols to ensure your personal information remains protected."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How much does ElevateU cost?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We offer multiple subscription tiers—from a free trial with basic features to premium plans with individualized mentorship, ensuring there's an option for every budget."
+      }
+    }
+  ]
+};
+
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "ElevateU",
+  "url": "https://www.elevateu.com",
+  "logo": "https://www.elevateu.com/logo.png",
+  "sameAs": [
+    "https://www.facebook.com/elevateu",
+    "https://twitter.com/elevateu",
+    "https://www.linkedin.com/company/elevateu"
+  ]
+};
+
+// Sample success stories for the testimonial rotator.
+const successStories = [
+  {
+    id: 1,
+    name: "Alex’s Journey",
+    description:
+      "ElevateU helped Alex improve his SAT score by 200 points and secure admission to UC Berkeley. The personalized coaching transformed his application.",
+    excerpt: "A total game changer in test prep and college counseling.",
+    image: ""
+  },
+  {
+    id: 2,
+    name: "Maria’s Transformation",
+    description:
+      "Maria’s dream of a full scholarship at Stanford became a reality thanks to ElevateU’s tailored roadmap and mentorship.",
+    excerpt: "Her future was completely reimagined with our guidance.",
+    image: ""
+  },
+  {
+    id: 3,
+    name: "Victor’s Success",
+    description:
+      "Victor’s application stood out after he used ElevateU's essay guidance, resulting in multiple admission offers from top universities.",
+    excerpt: "A standout application that opened many doors.",
+    image: ""
+  },
+];
+
+/* FadeInSection Component: Fades and slides in content when scrolled into view */
+function FadeInSection({ children }: { children: React.ReactNode }) {
+  const domRef = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => setVisible(entry.isIntersecting));
+      },
+      { threshold: 0.2 }
+    );
+    if (domRef.current) {
+      observer.observe(domRef.current);
+    }
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={domRef}
+      className={`transition-all duration-700 transform ${
+        visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+      }`}
+    >
+      {children}
+    </div>
+  );
+}
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
+    <>
+      <Head>
+        <title>ElevateU: AI College Counseling, Unlimited SAT Prep &amp; Personalized University Admissions Guidance</title>
+        <meta
+          name="description"
+          content="ElevateU is your global AI-driven college readiness software offering unlimited SAT practice, tailored essay guidance, and data-driven university recommendations. Transform your future with AI-powered college and career counseling."
         />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+        <meta
+          name="keywords"
+          content="AI college counseling, unlimited SAT prep, college readiness, personalized essay guidance, university recommendations, SAT unlimited questions, AI college admissions"
+        />
+        <meta
+          property="og:title"
+          content="ElevateU: AI College Counseling, Unlimited SAT Prep &amp; Personalized University Admissions Guidance"
+        />
+        <meta
+          property="og:description"
+          content="Join thousands of students worldwide who leverage ElevateU’s advanced AI for unlimited SAT practice, personalized essay writing, and data-driven college recommendations."
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+      </Head>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      {/* HERO SECTION */}
+      <FadeInSection>
+        <header className="relative overflow-hidden bg-white">
+          <AnimatedBackground />
+          <div className="container relative z-10 py-24 md:py-32">
+            <div className="grid gap-8 md:grid-cols-2 md:gap-12 items-center">
+              <div className="flex flex-col justify-center space-y-6">
+                <div className="inline-flex items-center rounded-full border border-[#5E3CB3]/20 bg-[#5E3CB3]/10 px-4 py-1 text-sm text-[#5E3CB3] uppercase tracking-wide">
+                  AI-Powered Education
+                </div>
+                <h1 className="text-4xl font-bold tracking-tighter leading-tight sm:text-5xl md:text-6xl text-[#2A2D43]">
+                  ElevateU: Unlock Your Future with AI-Driven College &amp; Career Counseling
+                </h1>
+                <p className="max-w-lg text-lg text-[#4A4A4A]">
+                  Experience unlimited SAT practice, data‑driven university recommendations, and personalized essay guidance. Our AI combines expert mentorship with advanced analytics to guide you from high school to your dream career.
+                </p>
+                <div className="flex flex-col gap-4 sm:flex-row">
+                  <Button
+                    size="lg"
+                    className="gap-1.5 transition-colors duration-200 bg-[#5E3CB3] hover:bg-[#4D2D9B] text-white"
+                    asChild
+                  >
+                    <Link href="/signup">
+                      <>
+                        Start Your Journey
+                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      </>
+                    </Link>
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="transition-colors duration-200 border border-[#5E3CB3] text-[#5E3CB3] hover:bg-[#5E3CB3] hover:text-white"
+                    asChild
+                  >
+                    <Link href="/about">Learn More</Link>
+                  </Button>
+                </div>
+              </div>
+              <div className="flex items-center justify-center">
+                <div className="relative h-80 w-80 md:h-96 md:w-96 animate-float flex items-center justify-center">
+                  <GraduationCap className="h-40 w-40 md:h-48 md:w-48 text-[#5E3CB3]" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+      </FadeInSection>
+
+      {/* WHY CHOOSE ELEVATEU? SECTION */}
+      <FadeInSection>
+        <section className="py-16 md:py-24 bg-white">
+          <div className="container">
+            <div className="text-center mb-8">
+              <h2 className="text-4xl font-extrabold text-[#2A2D43]">Why Choose ElevateU?</h2>
+              <p className="mt-2 max-w-xl mx-auto text-lg text-[#4A4A4A]">
+                We combine cutting-edge AI with real mentorship to give you a competitive edge.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+              {[
+                {
+                  title: "AI-Driven Roadmaps",
+                  desc: "Receive a customized plan based on your interests, strengths, and goals.",
+                  icon: <BookOpen className="h-12 w-12 text-[#5E3CB3]" />
+                },
+                {
+                  title: "Unlimited SAT Practice",
+                  desc: "Practice endlessly with adaptive AI-generated SAT questions.",
+                  icon: <Clock className="h-12 w-12 text-[#5E3CB3]" />
+                },
+                {
+                  title: "Tailored Essay Guidance",
+                  desc: "Craft compelling narratives to stand out in college applications.",
+                  icon: <Users className="h-12 w-12 text-[#5E3CB3]" />
+                },
+                {
+                  title: "Scholarship Finder",
+                  desc: "Discover grants and scholarships that match your profile.",
+                  icon: <Search className="h-12 w-12 text-[#5E3CB3]" />
+                },
+              ].map((item, idx) => (
+                <div
+                  key={idx}
+                  className="p-6 bg-white rounded-lg shadow hover:shadow-md transition-shadow"
+                >
+                  <div className="mb-4 flex items-center justify-center">
+                    {item.icon}
+                  </div>
+                  <h3 className="font-bold text-xl text-[#2A2D43] text-center mb-2">
+                    {item.title}
+                  </h3>
+                  <p className="text-[#4A4A4A] text-center">
+                    {item.desc}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </FadeInSection>
+
+      {/* ADVANCED FEATURES - Accordion */}
+      <FadeInSection>
+        <section className="py-16 md:py-24 bg-white">
+          <div className="container">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold tracking-tighter text-[#2A2D43]">Advanced Features</h2>
+              <p className="mt-4 max-w-2xl mx-auto text-lg text-[#4A4A4A]">
+                Discover our cutting-edge tools that give you a competitive edge—from endless SAT questions to dynamic essay guidance.
+              </p>
+            </div>
+            <Accordion />
+          </div>
+        </section>
+      </FadeInSection>
+
+      {/* HOW ELEVATEU WORKS SECTION (New Design with Improved UX) */}
+      <FadeInSection>
+        <HowElevateUWorks />
+      </FadeInSection>
+
+      {/* INSPIRING SUCCESS STORIES SECTION */}
+      <FadeInSection>
+        <section className="py-16 md:py-24 bg-[#F4F4F7]">
+          <div className="container">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-[#2A2D43]">
+                Inspiring Success Stories in AI College Counseling
+              </h2>
+              <p className="mt-4 max-w-2xl mx-auto text-lg text-[#4A4A4A]">
+                Explore real-life accounts of students who leveraged our AI‑driven platform to achieve impressive results and secure admissions to their dream universities.
+              </p>
+            </div>
+            <div className="mt-12">
+              <TestimonialRotator caseStudies={successStories} />
+            </div>
+          </div>
+        </section>
+      </FadeInSection>
+
+      {/* FOOTER */}
+      <FadeInSection>
+        <SiteFooter />
+      </FadeInSection>
+    </>
+  );
+}
+
+/* Simple Accordion Component for Advanced Features */
+function Accordion() {
+  const features = [
+    {
+      id: 1,
+      title: "Unlimited SAT Practice",
+      description:
+        "Master the SAT with AI-generated questions tailored to your weaknesses. Practice endlessly to build confidence and improve scores.",
+      icon: <Search className="h-8 w-8 text-[#5E3CB3]" />,
+    },
+    {
+      id: 2,
+      title: "Data-Driven University Insights",
+      description:
+        "Receive personalized college recommendations backed by comprehensive university data to ensure the best-fit options for your academic journey.",
+      icon: <FileEdit className="h-8 w-8 text-[#5E3CB3]" />,
+    },
+    {
+      id: 3,
+      title: "Tailored Essay Guidance",
+      description:
+        "Craft compelling essays with AI assistance that highlights your strengths and aligns with each university's criteria.",
+      icon: <BookOpen className="h-8 w-8 text-[#5E3CB3]" />,
+    },
+  ];
+
+  const [activeId, setActiveId] = useState<number | null>(null);
+
+  const toggleAccordion = (id: number) => {
+    setActiveId((prev) => (prev === id ? null : id));
+  };
+
+  return (
+    <div className="space-y-4">
+      {features.map((feature) => (
+        <div key={feature.id} className="border rounded-xl overflow-hidden">
+          <button
+            onClick={() => toggleAccordion(feature.id)}
+            className="w-full flex items-center justify-between px-6 py-4 bg-gradient-to-r from-white to-[#F4F4F7] hover:bg-[#E6E6FA] transition-colors"
           >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-[#5E3CB3]/10 rounded-full">{feature.icon}</div>
+              <span className="text-xl font-bold text-[#2A2D43]">{feature.title}</span>
+            </div>
+            <span className="text-2xl text-[#5E3CB3]">
+              {activeId === feature.id ? "−" : "+"}
+            </span>
+          </button>
+          {activeId === feature.id && (
+            <div className="px-6 py-4 bg-white">
+              <p className="text-base text-[#4A4A4A]">{feature.description}</p>
+            </div>
+          )}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      ))}
     </div>
   );
 }

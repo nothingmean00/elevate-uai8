@@ -23,32 +23,32 @@ module.exports = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#57068C", // NYU Purple
+          DEFAULT: "#5E3CB3", // New Primary Purple
           foreground: "#FFFFFF",
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
+          DEFAULT: "#2A2D43", // Dark Indigo for headings/text
+          foreground: "#FFFFFF",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "#333333", // Charcoal Gray
+          DEFAULT: "#F4F4F7", // Light Gray background
+          foreground: "#4A4A4A", // Medium Gray text
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: "#C3F9FF", // Soft Complement
+          foreground: "#2A2D43", // Dark Indigo for contrast
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
         },
         card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
+          DEFAULT: "#FFFFFF", // Card background remains white
+          foreground: "#2A2D43", // Dark Indigo for card text
         },
       },
       borderRadius: {
@@ -74,4 +74,3 @@ module.exports = {
   },
   plugins: [require("tailwindcss-animate")],
 }
-

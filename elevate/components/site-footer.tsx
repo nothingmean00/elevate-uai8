@@ -1,157 +1,242 @@
-import Link from "next/link"
-import { BrainCircuit } from "lucide-react"
+"use client";
 
-export function SiteFooter() {
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
+import { Mail, Twitter, Linkedin, Instagram } from "lucide-react"; // or any icons you prefer
+
+export default function SiteFooter() {
   return (
-    <footer className="border-t bg-muted">
-      <div className="container py-8 md:py-12">
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <BrainCircuit className="h-6 w-6 text-primary" />
-              <div className="text-xl font-bold text-primary">ElevateU</div>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              AI-powered educational and career counseling platform helping students navigate their academic journey
-              with confidence.
-            </p>
-            <div className="flex gap-4 mt-4">
-              <Link href="#" className="text-muted-foreground hover:text-primary">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-                </svg>
-                <span className="sr-only">Facebook</span>
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                </svg>
-                <span className="sr-only">Instagram</span>
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>
-                </svg>
-                <span className="sr-only">Twitter</span>
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
-                  <rect x="2" y="9" width="4" height="12"></rect>
-                  <circle cx="4" cy="4" r="2"></circle>
-                </svg>
-                <span className="sr-only">LinkedIn</span>
-              </Link>
-            </div>
-          </div>
-          <div>
-            <h3 className="mb-4 text-sm font-semibold">Pages</h3>
+    <footer role="contentinfo" className="mt-16">
+      {/* Main Footer: Nav Columns + Contact */}
+      <div className="bg-background border-t py-10 text-foreground relative z-10">
+        <div className="container grid grid-cols-1 gap-8 md:grid-cols-4">
+          {/* Explore */}
+          <nav aria-label="Footer Navigation - Explore">
+            <h3 className="mb-4 text-base font-semibold text-secondary tracking-wide">
+              Explore
+            </h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/" className="text-muted-foreground hover:text-primary">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="text-muted-foreground hover:text-primary">
+                <Link
+                  href="/about"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
                   About
                 </Link>
               </li>
               <li>
-                <Link href="/features" className="text-muted-foreground hover:text-primary">
+                <Link
+                  href="/features"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
                   Features
                 </Link>
               </li>
               <li>
-                <Link href="/success-stories" className="text-muted-foreground hover:text-primary">
+                <Link
+                  href="/success-stories"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
                   Success Stories
                 </Link>
               </li>
             </ul>
-          </div>
-          <div>
-            <h3 className="mb-4 text-sm font-semibold">Resources</h3>
+          </nav>
+
+          {/* Features */}
+          <nav aria-label="Footer Navigation - Features">
+            <h3 className="mb-4 text-base font-semibold text-secondary tracking-wide">
+              Features
+            </h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/pricing" className="text-muted-foreground hover:text-primary">
+                <Link
+                  href="/features/ai-career"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
+                  AI Career Counselor
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/features/ai-chatbot"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
+                  AI Chatbot Counselor
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/features/ai-mentorship"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
+                  AI Mentorship
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/features/personalized-study"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
+                  Personalized Study
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/features/scholarship-finder"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
+                  Scholarship Finder
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/features/smart-application-assist"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
+                  Smart Application Assist
+                </Link>
+              </li>
+            </ul>
+          </nav>
+
+          {/* Resources */}
+          <nav aria-label="Footer Navigation - Resources">
+            <h3 className="mb-4 text-base font-semibold text-secondary tracking-wide">
+              Resources
+            </h3>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link
+                  href="/pricing"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
                   Pricing
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-muted-foreground hover:text-primary">
+                <Link
+                  href="/contact"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
                   Contact
                 </Link>
               </li>
               <li>
-                <Link href="/login" className="text-muted-foreground hover:text-primary">
+                <Link
+                  href="/login"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
                   Log In
                 </Link>
               </li>
               <li>
-                <Link href="/signup" className="text-muted-foreground hover:text-primary">
+                <Link
+                  href="/signup"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
                   Sign Up
                 </Link>
               </li>
             </ul>
-          </div>
+          </nav>
+
+          {/* Contact Info + Social */}
           <div>
-            <h3 className="mb-4 text-sm font-semibold">Contact</h3>
-            <address className="not-italic text-sm text-muted-foreground">
-              <p>New York University</p>
-              <p>70 Washington Square South</p>
-              <p>New York, NY 10012</p>
-              <p className="mt-2">info@elevateu.com</p>
-              <p>(212) 555-1234</p>
+            <h3
+              className="mb-4 text-base font-semibold text-secondary tracking-wide"
+              itemProp="name"
+            >
+              Contact
+            </h3>
+            <address
+              className="not-italic text-sm text-muted-foreground mb-4 leading-6"
+              itemScope
+              itemType="https://schema.org/PostalAddress"
+            >
+              <p itemProp="streetAddress">70 Washington Square South</p>
+              <p itemProp="addressLocality">New York</p>
+              <p itemProp="addressRegion">NY</p>
+              <p itemProp="postalCode">10012</p>
+              <p className="mt-2">
+                <Link href="mailto:info@elevateu.com" itemProp="email">
+                  info@elevateu.com
+                </Link>
+              </p>
+              <p>
+                <Link href="tel:+12125551234" itemProp="telephone">
+                  (212) 555-1234
+                </Link>
+              </p>
             </address>
+            {/* Social Icons */}
+            <div className="flex items-center gap-3">
+              <Link
+                href="https://twitter.com/YourBrand"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Twitter"
+                className="p-2 rounded-full hover:bg-primary/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary transition-colors"
+              >
+                <Twitter className="h-5 w-5" />
+              </Link>
+              <Link
+                href="https://linkedin.com/YourBrand"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn"
+                className="p-2 rounded-full hover:bg-primary/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary transition-colors"
+              >
+                <Linkedin className="h-5 w-5" />
+              </Link>
+              <Link
+                href="https://instagram.com/YourBrand"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                className="p-2 rounded-full hover:bg-primary/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary transition-colors"
+              >
+                <Instagram className="h-5 w-5" />
+              </Link>
+              <Link
+                href="mailto:info@elevateu.com"
+                aria-label="Email"
+                className="p-2 rounded-full hover:bg-primary/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary transition-colors"
+              >
+                <Mail className="h-5 w-5" />
+              </Link>
+            </div>
           </div>
         </div>
-        <div className="mt-8 border-t pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} ElevateU. All rights reserved.</p>
+
+        {/* Legal Section */}
+        <div className="mt-10 border-t pt-6 text-center text-sm text-muted-foreground">
+          <ul className="flex flex-col items-center gap-2 md:flex-row md:gap-4 md:justify-center">
+            <li>
+              <Link
+                href="/terms-of-service"
+                className="hover:text-primary transition-colors"
+              >
+                Terms of Service
+              </Link>
+            </li>
+            <li className="text-gray-400 hidden md:block">|</li>
+            <li>
+              <Link
+                href="/privacy-policy"
+                className="hover:text-primary transition-colors"
+              >
+                Privacy Policy
+              </Link>
+            </li>
+          </ul>
+          <p className="mt-4">
+            &copy; {new Date().getFullYear()}{" "}
+            <span itemProp="legalName">ElevateU</span>. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>
-  )
+  );
 }
-
