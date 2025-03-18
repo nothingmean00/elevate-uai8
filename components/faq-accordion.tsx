@@ -14,14 +14,18 @@ interface FAQItem {
 }
 
 interface FAQAccordionProps {
-  faqs: FAQItem[]
+  faqs?: FAQItem[]
+  items?: FAQItem[]
   className?: string
 }
 
-export function FAQAccordion({ faqs, className = '' }: FAQAccordionProps) {
+export function FAQAccordion({ faqs, items, className = '' }: FAQAccordionProps) {
+  // Use items prop if provided, otherwise use faqs prop, or default to empty array
+  const faqItems = items || faqs || [];
+  
   return (
     <Accordion type="single" collapsible className={className}>
-      {faqs.map((faq, index) => (
+      {faqItems.map((faq, index) => (
         <AccordionItem key={index} value={`item-${index}`}>
           <AccordionTrigger>{faq.question}</AccordionTrigger>
           <AccordionContent>{faq.answer}</AccordionContent>
