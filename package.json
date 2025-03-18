@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start -H 0.0.0.0",
-    "lint": "next lint"
+    "lint": "next lint",
+    "vercel-build": "sh vercel-build.sh",
+    "setup": "sh fix-structure.sh"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",
