@@ -50,6 +50,31 @@ export function cn(...inputs) {
 EOL
 fi
 
+# Fix the react-remove-scroll package issue
+echo "Fixing react-remove-scroll package..."
+mkdir -p node_modules_patch
+cp -v react-remove-scroll-polyfill.js node_modules_patch/react-remove-scroll.js
+
+# Fix the package.json for react-remove-scroll
+if [ -d "node_modules/react-remove-scroll" ]; then
+  echo "Patching react-remove-scroll package.json..."
+  cat > node_modules/react-remove-scroll/package.json << EOL
+{
+  "name": "react-remove-scroll",
+  "version": "2.5.5",
+  "description": "A cross-browser way to remove body scroll",
+  "main": "./dist/es5/index.js",
+  "module": "./dist/es5/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/es5/index.js",
+      "require": "./dist/es5/index.js"
+    }
+  }
+}
+EOL
+fi
+
 # Create a tsconfig.json with explicit path aliases
 echo "Creating tsconfig.json with path aliases..."
 cat > tsconfig.json << EOL
@@ -78,7 +103,8 @@ cat > tsconfig.json << EOL
     "paths": {
       "@/*": ["./*"],
       "@/components/*": ["./components/*"],
-      "@/lib/*": ["./lib/*"]
+      "@/lib/*": ["./lib/*"],
+      "react-remove-scroll": ["./node_modules_patch/react-remove-scroll.js"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
@@ -540,12 +566,159 @@ sed -i 's|@/components/ui/button|./ui/button|g' app/login/page.tsx 2>/dev/null |
 sed -i 's|@/components/ui/button|./ui/button|g' app/page.tsx 2>/dev/null || echo "Failed to update button import in main page"
 sed -i 's|@/components/faq-accordion|./faq-accordion|g' app/features/page.jsx 2>/dev/null || echo "Failed to update faq-accordion import"
 
+# Directly modify the problematic components
+echo "Creating a basic sheet component that doesn't use react-remove-scroll..."
+cat > components/ui/sheet.tsx << EOL
+"use client"
+
+import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
+
+import { cn } from "@/lib/utils"
+
+const SheetVariants = cva(
+  "fixed z-50 gap-4 bg-background p-6 shadow-lg transition ease-in-out",
+  {
+    variants: {
+      side: {
+        top: "inset-x-0 top-0 border-b",
+        bottom: "inset-x-0 bottom-0 border-t",
+        left: "inset-y-0 left-0 h-full border-r",
+        right: "inset-y-0 right-0 h-full border-l",
+      },
+    },
+    defaultVariants: {
+      side: "right",
+    },
+  }
+)
+
+interface SheetProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof SheetVariants> {
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+}
+
+function Sheet({
+  className,
+  children,
+  side,
+  open,
+  ...props
+}: SheetProps) {
+  if (!open) return null;
+  
+  return (
+    <div className="fixed inset-0 z-50 bg-black/50" onClick={() => props.onOpenChange?.(false)}>
+      <div 
+        className={cn(SheetVariants({ side }), className)} 
+        onClick={(e) => e.stopPropagation()}
+        {...props}
+      >
+        {children}
+      </div>
+    </div>
+  )
+}
+
+const SheetHeader = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={cn("flex flex-col space-y-2 text-center sm:text-left", className)}
+    {...props}
+  />
+)
+
+const SheetFooter = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2", className)}
+    {...props}
+  />
+)
+
+const SheetTitle = React.forwardRef<
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLHeadingElement>
+>(({ className, ...props }, ref) => (
+  <h3
+    ref={ref}
+    className={cn("text-lg font-semibold text-foreground", className)}
+    {...props}
+  />
+))
+SheetTitle.displayName = "SheetTitle"
+
+const SheetDescription = React.forwardRef<
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLParagraphElement>
+>(({ className, ...props }, ref) => (
+  <p
+    ref={ref}
+    className={cn("text-sm text-muted-foreground", className)}
+    {...props}
+  />
+))
+SheetDescription.displayName = "SheetDescription"
+
+const SheetClose = React.forwardRef<
+  HTMLButtonElement,
+  React.ButtonHTMLAttributes<HTMLButtonElement>
+>(({ className, ...props }, ref) => (
+  <button
+    ref={ref}
+    className={cn("absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none", className)}
+    onClick={() => props.onClick?.({} as any)}
+    {...props}
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+      <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+    </svg>
+    <span className="sr-only">Close</span>
+  </button>
+))
+SheetClose.displayName = "SheetClose"
+
+const SheetContent = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement> & {
+    side?: VariantProps<typeof SheetVariants>["side"]
+    open?: boolean
+    onOpenChange?: (open: boolean) => void
+  }
+>(({ className, children, side = "right", open, onOpenChange, ...props }, ref) => (
+  <Sheet side={side} open={open} onOpenChange={onOpenChange}>
+    <div ref={ref} className={cn("grid gap-4", className)} {...props}>
+      {children}
+      <SheetClose />
+    </div>
+  </Sheet>
+))
+SheetContent.displayName = "SheetContent"
+
+export {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetFooter,
+  SheetTitle,
+  SheetDescription,
+  SheetClose,
+}
+EOL
+
 # Print debug info about the most important component files
 echo "Verifying components exist:"
 ls -la components/contact-form.tsx || echo "Missing contact-form.tsx"
 ls -la components/faq-accordion.tsx || echo "Missing faq-accordion.tsx"
 ls -la components/ui/button.tsx || echo "Missing ui/button.tsx"
 ls -la components/ui/accordion.tsx || echo "Missing ui/accordion.tsx"
+ls -la components/ui/sheet.tsx || echo "Missing ui/sheet.tsx"
 
 # Echo for debugging
 echo "Directory structure after copying:"

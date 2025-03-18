@@ -29,8 +29,13 @@ const nextConfig = {
       '@/components/animated-background': './components/animated-background.tsx',
     };
 
+    // Fix for react-remove-scroll package
+    config.resolve.mainFields = ['browser', 'main', 'module'];
+
     return config;
   },
+  // Add transpilePackages to handle problematic dependencies
+  transpilePackages: ['react-remove-scroll'],
 };
 
 export default nextConfig;
