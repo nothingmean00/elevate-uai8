@@ -36,9 +36,11 @@ cp -v elevate/postcss.config.mjs . 2>/dev/null || echo "Failed to copy postcss.c
 # Fix the imports in the app files by creating direct imports without path aliases
 echo "Fixing imports in app files..."
 
-# Create a replacement for the utils import that doesn't use @/ path aliases
-mkdir -p node_modules/utils
-cat > node_modules/utils/index.js << EOL
+# Create utils.ts in the lib directory if it doesn't exist
+if [ ! -f "lib/utils.ts" ]; then
+  echo "Creating lib/utils.ts..."
+  mkdir -p lib
+  cat > lib/utils.ts << EOL
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -46,6 +48,7 @@ export function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
 EOL
+fi
 
 # Create a tsconfig.json with explicit path aliases
 echo "Creating tsconfig.json with path aliases..."
@@ -192,23 +195,349 @@ EOL
 # Update the contact/page.tsx to use the local component
 sed -i 's|@/components/contact-form|./contact-form-local|g' app/contact/page.tsx 2>/dev/null || echo "Failed to update contact-form import"
 
+# Create local utils.ts files for each UI component directory
+mkdir -p app/features/lib
+mkdir -p app/login/lib
+mkdir -p app/ui/lib
+
+# Copy the utils.ts file to each location
+cat > app/features/lib/utils.ts << EOL
+import { clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+export function cn(...inputs) {
+  return twMerge(clsx(inputs));
+}
+EOL
+
+cat > app/login/lib/utils.ts << EOL
+import { clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+export function cn(...inputs) {
+  return twMerge(clsx(inputs));
+}
+EOL
+
+cat > app/ui/lib/utils.ts << EOL
+import { clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+export function cn(...inputs) {
+  return twMerge(clsx(inputs));
+}
+EOL
+
 # Add a modified version of the button component to each directory where it's needed
 mkdir -p app/features/ui
 mkdir -p app/login/ui
 mkdir -p app/ui
 
-# Copy the button component to each location
-cp -v components/ui/button.tsx app/features/ui/ 2>/dev/null || echo "Failed to copy button to features"
-cp -v components/ui/button.tsx app/login/ui/ 2>/dev/null || echo "Failed to copy button to login"
-cp -v components/ui/button.tsx app/ui/ 2>/dev/null || echo "Failed to copy button to app"
+# Copy the button component to each location with modified imports
+cat > app/features/ui/button.tsx << EOL
+"use client"
+
+import * as React from "react"
+import { Slot } from "@radix-ui/react-slot"
+import { cva, type VariantProps } from "class-variance-authority"
+
+import { cn } from "../lib/utils"
+
+const buttonVariants = cva(
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive:
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        outline:
+          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+      size: {
+        default: "h-10 px-4 py-2",
+        sm: "h-9 rounded-md px-3",
+        lg: "h-11 rounded-md px-8",
+        icon: "h-10 w-10",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean
+}
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
+    const Comp = asChild ? Slot : "button"
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      />
+    )
+  }
+)
+Button.displayName = "Button"
+
+export { Button, buttonVariants }
+EOL
+
+# Do the same for login/ui/button.tsx
+cat > app/login/ui/button.tsx << EOL
+"use client"
+
+import * as React from "react"
+import { Slot } from "@radix-ui/react-slot"
+import { cva, type VariantProps } from "class-variance-authority"
+
+import { cn } from "../lib/utils"
+
+const buttonVariants = cva(
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive:
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        outline:
+          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+      size: {
+        default: "h-10 px-4 py-2",
+        sm: "h-9 rounded-md px-3",
+        lg: "h-11 rounded-md px-8",
+        icon: "h-10 w-10",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean
+}
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
+    const Comp = asChild ? Slot : "button"
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      />
+    )
+  }
+)
+Button.displayName = "Button"
+
+export { Button, buttonVariants }
+EOL
+
+# And for app/ui/button.tsx
+cat > app/ui/button.tsx << EOL
+"use client"
+
+import * as React from "react"
+import { Slot } from "@radix-ui/react-slot"
+import { cva, type VariantProps } from "class-variance-authority"
+
+import { cn } from "../lib/utils"
+
+const buttonVariants = cva(
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive:
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        outline:
+          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+      size: {
+        default: "h-10 px-4 py-2",
+        sm: "h-9 rounded-md px-3",
+        lg: "h-11 rounded-md px-8",
+        icon: "h-10 w-10",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean
+}
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
+    const Comp = asChild ? Slot : "button"
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      />
+    )
+  }
+)
+Button.displayName = "Button"
+
+export { Button, buttonVariants }
+EOL
+
+# Create a local accordion component for features directory
+mkdir -p app/features/ui
+cat > app/features/ui/accordion.tsx << EOL
+"use client"
+
+import * as React from "react"
+import * as AccordionPrimitive from "@radix-ui/react-accordion"
+import { ChevronDown } from "lucide-react"
+
+import { cn } from "../lib/utils"
+
+const Accordion = AccordionPrimitive.Root
+
+const AccordionItem = React.forwardRef<
+  React.ElementRef<typeof AccordionPrimitive.Item>,
+  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
+>(({ className, ...props }, ref) => (
+  <AccordionPrimitive.Item
+    ref={ref}
+    className={cn("border-b", className)}
+    {...props}
+  />
+))
+AccordionItem.displayName = "AccordionItem"
+
+const AccordionTrigger = React.forwardRef<
+  React.ElementRef<typeof AccordionPrimitive.Trigger>,
+  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>
+>(({ className, children, ...props }, ref) => (
+  <AccordionPrimitive.Header className="flex">
+    <AccordionPrimitive.Trigger
+      ref={ref}
+      className={cn(
+        "flex flex-1 items-center justify-between py-4 font-medium transition-all hover:underline [&[data-state=open]>svg]:rotate-180",
+        className
+      )}
+      {...props}
+    >
+      {children}
+      <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
+    </AccordionPrimitive.Trigger>
+  </AccordionPrimitive.Header>
+))
+AccordionTrigger.displayName = "AccordionTrigger"
+
+const AccordionContent = React.forwardRef<
+  React.ElementRef<typeof AccordionPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>
+>(({ className, children, ...props }, ref) => (
+  <AccordionPrimitive.Content
+    ref={ref}
+    className={cn(
+      "overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down",
+      className
+    )}
+    {...props}
+  >
+    <div className="pb-4 pt-0">{children}</div>
+  </AccordionPrimitive.Content>
+))
+AccordionContent.displayName = "AccordionContent"
+
+export { Accordion, AccordionItem, AccordionTrigger, AccordionContent }
+EOL
+
+# Create the modified faq-accordion for features
+cat > app/features/faq-accordion.tsx << EOL
+'use client'
+
+import React from 'react'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from './ui/accordion'
+
+interface FAQItem {
+  question: string
+  answer: string
+}
+
+interface FAQAccordionProps {
+  faqs?: FAQItem[]
+  items?: FAQItem[]
+  className?: string
+}
+
+export function FAQAccordion({ faqs, items, className = '' }: FAQAccordionProps) {
+  // Use items prop if provided, otherwise use faqs prop, or default to empty array
+  const faqItems = items || faqs || [];
+  
+  return (
+    <Accordion type="single" collapsible className={className}>
+      {faqItems.map((faq, index) => (
+        <AccordionItem key={index} value={\`item-\${index}\`}>
+          <AccordionTrigger>{faq.question}</AccordionTrigger>
+          <AccordionContent>{faq.answer}</AccordionContent>
+        </AccordionItem>
+      ))}
+    </Accordion>
+  )
+}
+
+export default FAQAccordion
+EOL
+
+# Copy the additional components needed for page.tsx
+cp -v components/animated-background.tsx app/ 2>/dev/null || echo "Failed to copy animated-background"
+cp -v components/testimonial-rotator.tsx app/ 2>/dev/null || echo "Failed to copy testimonial-rotator"
+
+# Update imports in the main page
+sed -i 's|@/components/animated-background|./animated-background|g' app/page.tsx 2>/dev/null || echo "Failed to update animated-background import"
+sed -i 's|@/components/testimonial-rotator|./testimonial-rotator|g' app/page.tsx 2>/dev/null || echo "Failed to update testimonial-rotator import"
 
 # Update imports in the respective files
 sed -i 's|@/components/ui/button|./ui/button|g' app/features/page.jsx 2>/dev/null || echo "Failed to update button import in features"
 sed -i 's|@/components/ui/button|./ui/button|g' app/login/page.tsx 2>/dev/null || echo "Failed to update button import in login"
 sed -i 's|@/components/ui/button|./ui/button|g' app/page.tsx 2>/dev/null || echo "Failed to update button import in main page"
-
-# Copy the faq-accordion to features directory
-cp -v components/faq-accordion.tsx app/features/ 2>/dev/null || echo "Failed to copy faq-accordion to features"
 sed -i 's|@/components/faq-accordion|./faq-accordion|g' app/features/page.jsx 2>/dev/null || echo "Failed to update faq-accordion import"
 
 # Print debug info about the most important component files
@@ -231,9 +560,6 @@ if [ ! -f "next.config.mjs" ]; then
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  experimental: {
-    appDir: true,
-  },
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,

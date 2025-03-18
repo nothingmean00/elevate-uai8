@@ -1,9 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  experimental: {
-    appDir: true,
-  },
   // Add webpack configuration to resolve path aliases
   webpack: (config, { isServer }) => {
     // Add a simple rule to handle path aliases
@@ -24,8 +21,12 @@ const nextConfig = {
       ...config.resolve.fallback,
       '@/lib/utils': './lib/utils.ts',
       '@/components/ui/button': './components/ui/button.tsx',
+      '@/components/ui/accordion': './components/ui/accordion.tsx',
       '@/components/contact-form': './components/contact-form.tsx',
       '@/components/faq-accordion': './components/faq-accordion.tsx',
+      '@/components/testimonial-carousel': './components/testimonial-carousel.tsx',
+      '@/components/testimonial-rotator': './components/testimonial-rotator.tsx',
+      '@/components/animated-background': './components/animated-background.tsx',
     };
 
     return config;
