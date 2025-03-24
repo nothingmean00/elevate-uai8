@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
@@ -15,11 +14,11 @@ export interface CaseStudy {
 }
 
 // Define props for the component.
-interface TestimonialRotatorProps {
+export interface TestimonialRotatorProps {
   caseStudies: CaseStudy[];
 }
 
-export default function TestimonialRotator({ caseStudies }: TestimonialRotatorProps) {
+const TestimonialRotator: React.FC<TestimonialRotatorProps> = ({ caseStudies }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const totalSlides = caseStudies.length;
 
@@ -137,16 +136,6 @@ export default function TestimonialRotator({ caseStudies }: TestimonialRotatorPr
       </div>
     </div>
   );
-}
-
-TestimonialRotator.propTypes = {
-  caseStudies: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      name: PropTypes.string.isRequired,
-      description: PropTypes.string.isRequired,
-      excerpt: PropTypes.string.isRequired,
-      image: PropTypes.string,
-    })
-  ).isRequired,
 };
+
+export default TestimonialRotator;

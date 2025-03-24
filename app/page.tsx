@@ -14,12 +14,13 @@ import {
   FileEdit,
   Search,
   GraduationCap,
+  BookMarked,
 } from "lucide-react";
+import TestimonialRotator from "@/components/testimonial-rotator";
+import { FeatureCard } from "@/components/feature-card";
+import { FAQAccordion } from "@/components/faq-accordion";
 
 // Lazy load heavy components
-const TestimonialRotator = dynamic(() => import("@/components/testimonial-rotator"), {
-  loading: () => <div className="h-80 w-full bg-gray-100 animate-pulse rounded-md"></div>
-});
 const AnimatedBackground = dynamic(() => import("@/components/animated-background").then(mod => mod.AnimatedBackground), { 
   ssr: false
 });
