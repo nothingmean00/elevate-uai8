@@ -1,0 +1,12 @@
+# Ignore the nested elevate folder to avoid duplicate app structure
+/elevate
+
+# Node modules
+node_modules
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local 
